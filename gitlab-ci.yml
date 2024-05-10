@@ -1,0 +1,18 @@
+stages:
+  - build
+
+Build image:
+  stage: build
+  image: docker:latest
+  tags:
+  - external
+  before_script:
+  - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY -u $REGISTRY_USER --password-stdin
+  script:
+  - tag="${CI_COMMIT_SHORT_SHA}"
+  - image="${REGISTRY}/flintbuck/ansible-img"
+  - docker build --pull -t "${image}:${tag}" .
+  - docker tag "${image}:${tag}" "${image}:latest"
+  - docker push "${image}:${tag}"
+  - docker push "${image}:latest"
+  - docker logout
