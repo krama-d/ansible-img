@@ -5,13 +5,14 @@ def install_specified_collections():
         "microsoft.ad",
         "community.hashi_vault",
         "community.general",
-        "community.docker",
+        "community.docker.docker_compose_v2",
         "community.kubernetes",
         "community.routeros",
         "community.libvirt",
         "community.kubevirt",
         "community.zabbix",
-        "community.mysql"
+        "community.mysql",
+        "nginxinc.nginx_core"
     ]
 
     for collection in collections:
@@ -20,4 +21,3 @@ def install_specified_collections():
 
 if __name__ == "__main__":
     install_specified_collections()
-  
