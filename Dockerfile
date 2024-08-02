@@ -1,24 +1,31 @@
-FROM python:3.10-slim
-ENV ANSIBLE_HOST_KEY_CHECKING=False
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    git \
-    ssh \
-    gcc \
-    openssh-client \
-    libc6-dev \
-    build-essential \
-    rsyslog \
-    libldap2-dev \
-    libsasl2-dev \
-    && rm -rf /var/lib/apt/lists/*
+FROM python:alpine3.20
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir ansible bs4 requests python-ldap hvac
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+
+RUN apk update && \
+    apk add --no-cache \
+    build-base \
+    ca-certificates \
+    cyrus-sasl-dev \
+    gcc \
+    git \
+    libc-dev \
+    mariadb-dev \
+    openldap-dev \
+    openssh \
+    openssh-client \
+    rsync \
+    rsyslog \
+    sshpass \
+    zip
+
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir ansible beautifulsoup4 requests ldap3 hvac mysqlclient
+
 WORKDIR /ansible
-# COPY ./playbooks /ansible/playbooks # Add your own playbooks in to image
+
 COPY collect.py /usr/local/bin/collect.py
+
 RUN python /usr/local/bin/collect.py
 
 CMD ["ansible-playbook", "--version"]
