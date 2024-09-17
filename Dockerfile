@@ -1,31 +1,35 @@
-FROM python:alpine3.20
+FROM python:3.10-alpine
 
 ENV ANSIBLE_HOST_KEY_CHECKING=False
 
 RUN apk update && \
     apk add --no-cache \
-    build-base \
-    ca-certificates \
-    cyrus-sasl-dev \
-    gcc \
-    git \
-    libc-dev \
-    mariadb-dev \
-    openldap-dev \
-    openssh \
-    openssh-client \
-    rsync \
-    rsyslog \
-    sshpass \
-    zip
-
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir ansible beautifulsoup4 requests ldap3 hvac mysqlclient
+        ca-certificates \
+        git \
+        openssh \
+        openssh-client \
+        rsync \
+        rsyslog \
+        sshpass \
+        zip \
+        mariadb-dev \
+        openldap-dev \
+        cyrus-sasl-dev \
+        gcc \
+        libc-dev && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir \
+        ansible \
+        beautifulsoup4 \
+        requests \
+        ldap3 \
+        hvac \
+        mysqlclient
 
 WORKDIR /ansible
 
-COPY collect.py /usr/local/bin/collect.py
+COPY requirements.yml /ansible/requirements.yml
 
-RUN python /usr/local/bin/collect.py
+RUN ansible-galaxy collection install -r requirements.yml
 
 CMD ["ansible-playbook", "--version"]
